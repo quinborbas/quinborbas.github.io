@@ -1,9 +1,11 @@
 import os
+from env import Env
 
 class View:
-  def __init__(self, title: str):
+  def __init__(self):
+    env = Env()
     self._content = self._find_html("base.html")
-    self._content = self._content.replace("{{TITLE}}", title)
+    self._content = self._content.replace("{{TITLE}}", env.get("STATIC_TITLE"))
 
   @property
   def content(self) -> str:
@@ -25,8 +27,8 @@ class View:
 
 
 class ListView(View):
-  def __init__(self, title: str):
-    super().__init__(title)
+  def __init__(self):
+    super().__init__()
 
     posts = os.listdir("./inputs")
     posts.sort()
@@ -54,8 +56,8 @@ class ListView(View):
 
 
 class PostView(View):
-  def __init__(self, title: str, path: str):
-    super().__init__(title)
+  def __init__(self, path: str):
+    super().__init__()
 
     html = self._find_html(path)
     self._content = self._content.replace("{{CONTENT}}", html)
@@ -63,6 +65,6 @@ class PostView(View):
 
 class ErrorView(View):
   def __init__(self, code: int, message: str):
-    super().__init__(f"REQUEST ERROR {code}")
+    super().__init__()
 
-    self._content = self._content.replace("{{CONTENT}}", f"<h2>{message}</h2>")
+    self._content = self._content.replace("{{CONTENT}}", f"<h2>Error {code}: {message}</h2>")
